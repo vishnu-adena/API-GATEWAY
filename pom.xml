@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.adena</groupId>
-    <artifactId>API_GATEWAY</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>API-GATEWAY</artifactId>
+    <version>0.0.1</version>
     <name>API_GATEWAY</name>
     <description>API_GATEWAY</description>
     <url/>
