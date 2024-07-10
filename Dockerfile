@@ -1,26 +1,27 @@
-# Use the latest Ubuntu image as base
-FROM ubuntu:latest
+# Use an official Maven image with JDK 21 to build the application
+FROM maven:3.8.8-eclipse-temurin-21 AS build
 
-# Install Java and Maven
-RUN apt-get update && apt-get install -y openjdk-21-jdk maven
-
-# Set JAVA_HOME environment variable
-ENV JAVA_HOME /usr/lib/jvm/java-21-openjdk-amd64
-
-# Add Java binaries to PATH
-ENV PATH $JAVA_HOME/bin:$PATH
-
-# Set the working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the Maven project files to the container
-COPY . .
+# Copy the pom.xml and source code into the container
+COPY pom.xml .
+COPY src ./src
 
-# Build the application
+# Package the application
 RUN mvn clean package -DskipTests
 
-# Expose the port the application runs on
-EXPOSE 8765
+# Use a smaller base image to run the application
+FROM eclipse-temurin:21-jre-alpine
 
-# Set the entry point to run the application
-ENTRYPOINT ["java", "-jar", "target/API-GATEWAY-0.0.1.jar"]
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the JAR file from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose the port the app runs on
+EXPOSE 8080
+
+# Command to run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
